@@ -1,7 +1,7 @@
 # Reinforcement Learning Cheatsheet
 _This is still a work in progress_
 
-Some important concepts and algorithms in RL, all summarized in one place.
+Some important concepts and algorithms in RL, all summarized in one place. File is available [here](https://alexandrethm.github.io/assets/pdf/rl-cheatsheet.pdf)
 
 ## Contents
 1. **Bandits**: settings, exploration-exploitation, UCB, Thompson Sampling
