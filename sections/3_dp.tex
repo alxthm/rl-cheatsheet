@@ -1,0 +1,22 @@
+\section{Dynamic Programming}
+\label{section:dp}
+
+\paragraph{Policy Evaluation Algorithm}
+For (small) tabular environments with known MDP, Bellman equations can be computed exactly and one can converge on $V^{\pi}$ by applying equation \ref{eq:bellman-v} repeatedly:
+\[
+    V_{i+1}(s) = \sum_{a\in A} \sum_{s' \in S} \pi(a|s) P(s'|s,a) [R(s,a,s') + \gamma V_i(s')]
+\]
+
+\paragraph{Policy Iteration Algorithm}
+Being \emph{greedy} with respect to current value function $V^{\pi_k}$ makes it possible to define a better (deterministic) policy: 
+\[
+    \pi_{k+1}(s) = \argmax_a \sum_{s' \in S} P(s'|s,a) [R(s,a,s') + \gamma V^{\pi_k}(s')] \tag*{\emph{policy improvement}}
+\]
+In the policy iteration algorithm, the policy evaluation algorithm is applied until convergence to $V^{\pi_k}$ and followed by one policy improvement step. This is repeated until convergence to $\pi^*$ (characterized by stationarity). The idea of having these two policy evaluation and improvement processes interact is found in many RL algorithms (not necessarily as separate steps, but also simultaneously) and is called \emph{general policy iteration}.
+
+\paragraph{Value Iteration Algorithm}
+Equation \ref{eq:bellman-v*} is applied repeatedly to converge directly on $V^*$:
+\[
+    V_{i+1}(s) = \max_{a\in A} \sum_{s' \in S} P(s'|s,a) [R(s,a,s') + \gamma V_i(s')]
+\]
+And $\pi^*$ is obtained by being greedy to $V^*$, which is possible since we know the MDP. Q-Value iteration (with equation \ref{eq:bellman-q*}) requires storing more values but is possible as well, and makes model-free approaches possible when the MDP is unknown (\nameref{section:value-based} section).

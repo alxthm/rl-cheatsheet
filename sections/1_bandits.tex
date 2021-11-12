@@ -1,0 +1,20 @@
+\section{Bandits}
+The \emph{multi-armed bandits problem} is a simplified setting of RL where actions do not affect the world state. In other words, the current state does not depend on previous actions, and the reward is immediate. Like any RL problem with unknown MDP, a successful agent should solve the \emph{exploration-exploitation dilemma}, i.e. find a balance between exploiting what it has already learned to improve the reward and exploring in order to find the best actions.
+
+\paragraph{Settings}
+Bandits problems can be stationary or non-stationary, and the setting can be stochastic or adversarial. Agents typically learn in an online setting and, in the case of a non-associative task (no need to associate different actions with different situations), they try to find a single best action out of a finite number of actions (also called “arms”). For associative tasks, \emph{contextual bandits} make use of additional information which can be global or individual context (i.e. per arm). Context can be fixed or variable.
+
+\paragraph{$\epsilon$-greedy}
+The $\epsilon$-greedy strategy selects a random action with probability $\epsilon$. \todo{add equations}
+
+\paragraph{Upper Confidence Bounds (UCB)}
+UCB \cite{auer2002using} follows an optimistic strategy and selects the best arm in the best case scenario, i.e. according to the upper bounds $B_t(i)$ on the arms value estimates:
+$$
+\pi_t = \argmax_i B_t(i)
+\quad \text{with} \quad
+B_t(i) = \hat{\mu_{i,t}} + \sqrt{\frac{2 \log t}{\sum_{s=0}^t \mathbbm{1}_{\pi_s=i}}}
+$$
+LinUCB \cite{li2010contextual} follows the UCB strategy but considers a linear and individual context $x_{i,t}$. We have $\mathbb{E}[r_{i,t} | x_{i,t}] = \theta_i^T x_{i,t}$ and parameters $\theta_i$ are estimated with Ridge Regression on previously observed contexts and rewards.
+
+\paragraph{Thompson Sampling}
+Thompson Sampling \cite{kaufmann2012thompson} follows a Bayesian approach and considers a parametric model $P(\mathcal{D} | \theta)$ with a prior $P(\theta)$. For instance, in the linear case \cite{agrawal2013thompson}: $P(r_{i,t} | \theta) = \mathcal{N}(\theta^T x_{i,t}, v^2)$ and $P(\theta) = \mathcal{N}(0, \sigma^2)$. Then, at each iteration $t$, we sample $\theta$ from $P(\theta | \mathcal{D}) \propto P(\mathcal{D}|\theta) P(\theta)$ and select the arm $\pi_t = \argmax_i \mathbb{E}[r_{i,t} | x_{i,t}, \theta]$.
