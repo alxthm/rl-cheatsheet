@@ -1,0 +1,41 @@
+\documentclass{article}
+\usepackage{import}         % to break down the code into modules
+\import{}{layout.tex}
+
+\title{\Large{Reinforcement Learning Cheatsheet (Work in progress)}}
+\author{
+  Alexandre Thomas\\
+  Mines ParisTech \& Sorbonne University\\
+  \texttt{alexandre.thomas@mines-paristech.fr}
+}
+
+\begin{document}
+
+\maketitle
+
+% todo: check content of other cheatsheets
+%   - https://github.com/angerhang/reinforcement-learning-cheat-sheet/blob/master/src/en.pdf
+%   - https://github.com/linker81/Reinforcement-Learning-CheatSheet/blob/master/rl_cheatsheet.pdf
+%   - (useful for algorithmes) https://github.com/udacity/rl-cheatsheet/blob/master/cheatsheet.pdf
+
+% places where I should put the link ?
+% - https://github.com/bfortuner/ml-glossary
+% - https://roboticsbiz.com/machine-learning-cheat-sheets-compilation-2020/
+% - linkedin
+% - discord M2 DAC
+
+\setcounter{tocdepth}{3}
+\tableofcontents{}
+\newpage
+
+\import{sections/}{1_bandits.tex}
+\import{sections/}{2_framework.tex}
+\import{sections/}{3_dp.tex}
+\import{sections/}{4_value_based.tex}
+\import{sections/}{5_policy_gradients.tex}
+
+\medskip
+\bibliographystyle{unsrt}
+\footnotesize
+\bibliography{biblio}
+\end{document}

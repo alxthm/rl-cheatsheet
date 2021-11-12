@@ -1,0 +1,57 @@
+\usepackage[margin=2cm]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}    % use 8-bit T1 fonts (works better with accents, signs like >, <, etc)
+% math symbols
+\usepackage{amsmath}
+\usepackage{amssymb}        % useful symbols (including the amsfonts package and blackboard letters)
+\usepackage{amsthm}         % to define theorems, proofs, etc
+\usepackage{mathtools}      % extends amsmath
+\usepackage{physics}        % additional symbols (vectors, matrices, etc)
+\usepackage{stmaryrd}       % double brackets for integer intervals (\llbracket)
+\usepackage{bbm}            % for mathbb digits, e.g. for the indicator function
+\usepackage{bm}             % make bold symbols
+% other (tables, formatting, etc)
+\usepackage{hyperref}
+\usepackage{booktabs}       % professional-quality tables
+\usepackage{tabularx}       % for tables as well (great for auto-sizing columns)
+\usepackage{float}          % for figures position
+\usepackage{graphicx}       % to use \includegraphics
+\usepackage[export]{adjustbox} % add useful options to \includegraphics
+\usepackage[font=small,labelfont=bf]{caption}
+\usepackage{caption}
+\usepackage[subrefformat=parens]{subcaption}
+\usepackage{nicefrac}       % nice inline fractions
+\usepackage{parskip}        % use spacing between paragraphs instead of indentation
+\usepackage{listings}       % for code snippets
+\usepackage[svgnames]{xcolor} % driver independent color utilities
+\usepackage[square,numbers]{natbib} % bibliography
+% \usepackage[light,condensed,math]{iwona} % fontstyle
+\usepackage[framemethod=TikZ]{mdframed}
+\usepackage[ruled, vlined]{algorithm2e}
+% \usepackage{subcaption}     % for subfigure command (used to group multiple algos)
+
+\xdefinecolor{navyblue}{named}{Navy}
+\xdefinecolor{orangered}{named}{OrangeRed}
+\xdefinecolor{darkred}{named}{DarkRed}
+\xdefinecolor{cadetblue}{named}{CadetBlue}
+
+\newcommand{\todo}[1]{\textcolor{red}{TODO: #1}}
+\newcommand*\demo{$\textcolor{CadetBlue}{(\star)}$}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator*{\E}{\mathop{\mathbb{E}}}
+
+% \usepackage{enumitem}
+% \setlist[itemize,1]{label={$\diamond$}} % (\bullet), $\cdot$ (\cdot), $\diamond$ (\diamond), $-$ (-), $\ast$ (\ast) and $\circ$ (\circ).
+% \setlist[itemize,2]{label={$-$}}
+% \setlist{nosep}
+
+% colored paragraph titles
+\usepackage{titlesec}
+\titleformat{\paragraph}[runin]
+  {\normalfont\normalsize\bfseries\color{darkred}}{}{}{$\diamond$ \hspace*{0.3em}}
+% use with:
+% \paragraph{Markov Decision Process (MDP)} Text bla bla bla
+
+\graphicspath{{./figures/}}
+\DeclareGraphicsExtensions{.pdf,.png}  % choose pdf if available otherwise png when extension is not specified
