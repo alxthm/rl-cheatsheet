@@ -62,7 +62,7 @@ is called the \emph{TD-error}.
     \[
         V(s_t) \leftarrow V(s_t) + \alpha [G_t^{(n)} - V(s_t)]
     \]
-    Multi-steps learning can converge faster depending on the problem. As $n \rightarrow \infty$, this update approaches the unbiased MC estimate of $V^\pi$, at the cost of higher variance.
+    Multi-steps learning can converge faster depending on the problem. As $n \rightarrow \infty$, $G_t^{(n)}$ approaches the unbiased MC estimate of $V^\pi$, at the cost of higher variance.
 
     \item \emph{TD($\lambda$) learning}. Instead of choosing the right $n$, a better way to navigate between TD(0) and MC updates is to average all $n$-step returns with a decay $\lambda$. For $\lambda \in [0,1)$, the \emph{$\lambda$-return} is defined as
     \[
@@ -70,6 +70,8 @@ is called the \emph{TD-error}.
     \]
     and also verifies $\E[G_t^\lambda] = V^\pi(s_t)$, therefore can be used in the update step. Choosing $\lambda=0$ is equivalent to TD(0) updates, and $\lambda \rightarrow 1$ approaches MC updates.
 \end{itemize}
+
+\todo{TD learning algo ? (forward view)}
 
 \paragraph{Eligibility traces} Eligibility traces $e_t$ are an equivalent but more convenient way of implementing TD($\lambda$) learning. Updates are done online (\emph{backward view}) instead of having to wait the end of the trajectory (\emph{forward view}).
 % todo: check
