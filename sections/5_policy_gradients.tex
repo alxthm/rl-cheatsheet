@@ -390,6 +390,7 @@ In addition to a continuous action space, DPG considers a non-stochastic policy 
     \nabla_\theta J(\theta) = \E_{s\sim d^{\pi_\theta}} \left[
         \nabla_a Q^{\pi_\theta}(s,a) \Bigr|_{a=\mu_\theta(s)} \nabla_\theta \mu_\theta(s)
     \right]
+\label{eq:ddpg-on-policy}
 \end{equation}
 And critic $Q^{\pi_\theta}$ can be learned with SARSA updates.
 
@@ -398,10 +399,39 @@ In order to add exploration and to be more sample-efficient, an off-policy versi
     \nabla_\theta J_\beta(\theta) \approx \E_{s\sim d^\beta} \left[
         \nabla_a Q^{\pi_\theta}(s,a) \Bigr|_{a=\mu_\theta(s)} \nabla_\theta \mu_\theta(s)
     \right]
+\label{eq:ddpg-off-policy}
 \end{equation}
 Doing the same approximation as in \ref{eq:off-policy-policy-gradient} (and this time we call $\beta$ the behavior policy). Critic can be learned with Q-learning updates.
 
 DDPG simply implements the off-policy version of DPG with deep neural networks for $Q^\pi$ and $\mu_\theta$, and adding noise to $\mu_\theta$ to construct the exploration policy. Stability is achieved by using tricks from DQN: replay buffer, target networks and soft updates. A couple extensions use additional tricks: 2 value networks $Q^\pi$ like Double DQN (TD3 \cite{fujimoto2018addressing}), Prioritized replay and a distributional critic (D4G \cite{barth2018distributed}).
 
 
-\paragraph{Policy gradient with an off-policy critic (Q-Prop)}
+\paragraph{Policy gradient with an off-policy critic (Q-Prop)} \cite{gu2016q}
+While off-policy methods like DDPG are more sample efficient than REINFORCE, the off-policy gradient (eq. \ref{eq:ddpg-off-policy}) is biased and typically less stable (requiring fine hyper-parameter optimization). The Q-Prop algorithm uses an unbiased on-policy gradient (more stable) but reduces the variance (more sample efficient) thanks a control variate $\eta(s_t)$ and an off-policy critic $Q_w$ learned like in DDPG.
+
+\begin{align}
+    \nabla_\theta J(\theta) = 
+    & \E_{s_t\sim d^\pi, a_t \sim \pi} \underbrace{
+        \left[
+            \nabla_\theta \log \pi_\theta(a_t\mid s_t) (\hat{A}(s_t,a_t) - \eta(s_t) \overline{A_w}(s_t,a_t))
+        \right]
+    }_{
+        \text{REINFORCE correction term ($\approx 0$ if $Q_w$ is good)}
+    }
+    \nonumber \\
+    & + \E_{s_t\sim d^\pi} \underbrace{
+        \left[
+            \eta(s_t) \nabla_a Q_w(s_t,a) \Bigr|_{a=\mu_\theta(s_t)} \nabla_\theta \mu_\theta(s_t)
+        \right]
+    }_{
+        \text{On-policy policy gradient with control variate $\eta(s_t)$}
+    }
+\end{align}
+
+With
+\begin{itemize}
+    \item $\overline{Q}(s_t,a_t) = Q_w(s_t, \mu_\theta(s_t)) + \nabla_a Q_w(s_t,a) \Bigr|_{a=\mu_\theta(s_t)}(a_t-\mu_\theta(s_t))$ (1st order Taylor approximation)
+    \item $\overline{A}(s_t,a_t) = \overline{Q}(s_t,a_t) - \E_{a \sim \pi_\theta}\left[\overline{Q}(s_t,a)\right] = \nabla_a Q_w(s_t, a) \Bigr|_{a=\mu_\theta(s_t)} (a_t-\mu_\theta(s_t))$
+    \item $\hat{A}(s_t,a_t)$ estimated with GAE (using $V_w$ learned on-policy)
+    \item $\eta(s_t) = 1$ if $\hat{A}(s_t,a_t) \overline{A}(s_t,a_t) > 0$ (i.e. our estimate of $A^\pi$ according to $Q_w$ at least has the same sign than the observed advantage $\hat{A}$), and $\eta(s_t) = 0$ otherwise.
+\end{itemize}
