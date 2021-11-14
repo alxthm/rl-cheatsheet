@@ -1,18 +1,38 @@
 \section{Bandits}
 The \emph{multi-armed bandits problem} is a simplified setting of RL where actions do not affect the world state. In other words, the current state does not depend on previous actions, and the reward is immediate. Like any RL problem with unknown MDP, a successful agent should solve the \emph{exploration-exploitation dilemma}, i.e. find a balance between exploiting what it has already learned to improve the reward and exploring in order to find the best actions.
 
-\paragraph{Settings}
-Bandits problems can be stationary or non-stationary, and the setting can be stochastic or adversarial. Agents typically learn in an online setting and, in the case of a non-associative task (no need to associate different actions with different situations), they try to find a single best action out of a finite number of actions (also called “arms”). For associative tasks, \emph{contextual bandits} make use of additional information which can be global or individual context (i.e. per arm). Context can be fixed or variable.
+\paragraph{Setting}
+Bandits problems can be stationary or non-stationary, and the setting can be stochastic or adversarial. Agents typically learn in an online setting and, in the case of a non-associative task (no need to associate different actions with different situations), they try to find a single best action out of a finite number of actions (also called “arms”). For associative tasks, \emph{contextual bandits} make use of additional information which can be global or individual context (i.e. per arm). Context can be fixed (e.g. $x\in \mathbb{R}^d$) or variable (e.g. $x_t\in \mathbb{R}^d, \forall t$).
+
+The objective is to find a policy $\pi$ that maximizes the cumulated reward:
+\[
+    \pi^* = \argmax_\pi \sum_{t=0}^T r_{\pi_t, t}
+\]
+Where $\pi_t \in \{1, \dots, K\}$ is the arm selected by $\pi$ at time $t$, and $r_{i,t}$ is the reward obtained at time $t$ after selecting the arm $i \in \{1, \dots, K\}$. At any point $t$, the expected reward of an arm $i \in \{1, \dots, K\}$ is:
+\[
+    \hat{\mu}_{i,t} = \E[r_{i,t}] = \frac{1}{T_i} \sum_{\substack{s=0 \\ \pi_s=i}}^t r_{i,s}
+\]
+Where $T_i = \sum_{s=0}^t \mathbbm{1}_{\pi_s=i}$ is the number of times arm $i$ was played up to time $t$.
 
 \paragraph{$\epsilon$-greedy}
-The $\epsilon$-greedy strategy selects a random action with probability $\epsilon$. \todo{add equations}
+The greedy strategy simply consists in selecting the arm that has given the best rewards and therefore has the best expected reward:
+\[
+    \forall t, \pi_t^\text{greedy} = \argmax_i \hat{mu}_{i,t}
+\]
+The $\epsilon$-greedy sometimes acts greedily, and sometimes selects a random action to improve exploration:
+\[
+    \forall t, \pi_t^\text{$\epsilon$-greedy} = \begin{cases}
+        \argmax_i \hat{mu}_{i,t} & \text{with probability $1-\epsilon$} \\
+        i \sim \mathcal{U}\{1,K\} & \text{with probability $\epsilon$}
+    \end{cases}
+\]
 
 \paragraph{Upper Confidence Bounds (UCB)}
 UCB \cite{auer2002using} follows an optimistic strategy and selects the best arm in the best case scenario, i.e. according to the upper bounds $B_t(i)$ on the arms value estimates:
 $$
 \pi_t = \argmax_i B_t(i)
 \quad \text{with} \quad
-B_t(i) = \hat{\mu_{i,t}} + \sqrt{\frac{2 \log t}{\sum_{s=0}^t \mathbbm{1}_{\pi_s=i}}}
+B_t(i) = \hat{\mu}_{i,t} + \sqrt{\frac{2 \log t}{T_i}}
 $$
 LinUCB \cite{li2010contextual} follows the UCB strategy but considers a linear and individual context $x_{i,t}$. We have $\mathbb{E}[r_{i,t} | x_{i,t}] = \theta_i^T x_{i,t}$ and parameters $\theta_i$ are estimated with Ridge Regression on previously observed contexts and rewards.
 
