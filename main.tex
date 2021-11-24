@@ -2,27 +2,31 @@
 \usepackage{import}         % to break down the code into modules
 \import{}{layout.tex}
 
-\title{\Large{Reinforcement Learning Cheatsheet (Work in progress)}}
+\title{\Large{Reinforcement Learning Cheatsheet}}
 \author{
   Alexandre Thomas\\
   Mines ParisTech \& Sorbonne University\\
-  \texttt{alexandre.thomas@mines-paristech.fr}
+  \url{https://alexandrethm.github.io/}
 }
 
 \begin{document}
 
 \maketitle
-
 % todo: check content of other cheatsheets
 %   - https://github.com/angerhang/reinforcement-learning-cheat-sheet/blob/master/src/en.pdf
 %   - https://github.com/linker81/Reinforcement-Learning-CheatSheet/blob/master/rl_cheatsheet.pdf
 %   - (useful for algorithmes) https://github.com/udacity/rl-cheatsheet/blob/master/cheatsheet.pdf
 
-% places where I should put the link ?
-% - https://github.com/bfortuner/ml-glossary
-% - https://roboticsbiz.com/machine-learning-cheat-sheets-compilation-2020/
-% - linkedin
-% - discord M2 DAC
+\begin{abstract}
+Some important concepts and algorithms in RL, all summarized in one place.
+
+In addition to reading the original papers, these more comprehensive resources can also be helpful:
+\begin{itemize}
+  \item \emph{Spinning Up in Deep RL}, by Open AI (\href{https://spinningup.openai.com/en/latest/index.html}{link}). A very nice introduction to RL and Policy Gradients, with code, (some) proofs, exercises and advice.
+  \item \emph{Reinforcement Learning and advanced Deep Learning (RLD)}, Sorbonne University course by Sylvain Lamprier (\href{https://dac.lip6.fr/master/rladl/}{link}). In French, with proofs for many results.
+  \item \emph{UCL Course on RL}, David Silver Lecture Notes \cite{silver2015}.
+\end{itemize}
+\end{abstract}
 
 \setcounter{tocdepth}{3}
 \tableofcontents{}
