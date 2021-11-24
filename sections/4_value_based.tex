@@ -71,7 +71,7 @@ is called the \emph{TD-error}.
     and also verifies $\E[G_t^\lambda] = V^\pi(s_t)$, therefore can be used in the update step. Choosing $\lambda=0$ is equivalent to TD(0) updates, and $\lambda \rightarrow 1$ approaches MC updates.
 \end{itemize}
 
-\todo{TD learning algo ? (forward view)}
+% todo: TD learning algo ? (forward view)
 
 \paragraph{Eligibility traces} Eligibility traces $e_t$ are an equivalent but more convenient way of implementing TD($\lambda$) learning. Updates are done online (\emph{backward view}) instead of having to wait the end of the trajectory (\emph{forward view}).
 % todo: check
@@ -95,13 +95,26 @@ is called the \emph{TD-error}.
 \label{algo:eligibility-traces}
 \end{algorithm}
 
-\todo{version with weights}
+% todo: version with weights
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.5\linewidth]{figures/td-learning.png}
-    \caption{Taken from \cite{sutton2018reinforcement}}
-    \label{fig:td-learning}
+    \begin{subfigure}{0.3\textwidth}
+        \includegraphics[width=\linewidth]{figures/backup-td.png}
+        \caption{TD(0) Learning (sampling and bootstrapping)}
+        \label{fig:backup-td}
+    \end{subfigure}
+    \begin{subfigure}{0.3\textwidth}
+        \includegraphics[width=\linewidth]{figures/backup-mc.png}
+        \caption{Monte-Carlo (sampling, no bootstrapping)}
+        \label{fig:backup-mc}
+    \end{subfigure}
+    \begin{subfigure}{0.3\textwidth}
+        \includegraphics[width=\linewidth]{figures/backup-dp.png}
+        \caption{Dynamic Programming (bootstrapping, no sampling)}
+        \label{fig:backup-dp}
+    \end{subfigure}
+    \caption{Different approaches to learning value functions. By using an estimate in the update, bootstrapping methods do not need to go as deep and can be faster, although they introduce bias. Unless the MDP is known, sampling is necessary. Figures taken from David Silver notes \cite{silver2015}, lecture 4 on Model-Free prediction.}
 \end{figure}
 
 
@@ -158,7 +171,7 @@ Because it is using the same value function $Q_\theta$ for both action selection
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.5\linewidth]{figures/double-dqn.png}
-    \caption{Taken from \cite{van2016deep}}
+    \caption{Red bars (resp. blue bars) show the bias in a single Q-learning update (resp. double Q learning update) when considering i.i.d. Gaussian noise. Figure taken from \cite{van2016deep}}
     \label{fig:double-dqn}
 \end{figure}
 

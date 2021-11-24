@@ -113,7 +113,7 @@ Here as well, eligibility traces are a way to implement GAE$(\gamma,\lambda)$. I
 \For{a number of episodes}{
     initialize $s_0$ and set $e_0(s)=0, \forall s$\;
      \While{episode not done}{
-        take action $a_t=\pi(s_t)$, observe $r_t$ and $s_{t+1}$ \;
+        take action $a_t \sim \pi(\cdot \mid s_t)$, observe $r_t$ and $s_{t+1}$ \;
         \For{all $s$}{
           $e_t(s) \leftarrow \lambda \gamma e_{t-1}(s) + \mathbbm{1}_{s_t=s}$ \tcp*{this leads to $e_t(s) = \sum_{k=0}^t(\lambda \gamma)^{t-k} \mathbbm{1}_{s_k=s}$}
           $V(s_t) \leftarrow V(s_t) + \alpha e_t(s) \delta_t$ \;
@@ -124,23 +124,22 @@ Here as well, eligibility traces are a way to implement GAE$(\gamma,\lambda)$. I
 \label{algo:gae-eligibility-traces}
 \end{algorithm}
 
-\todo{algos? learn $V^\pi ?$}
+% todo: add algos, e.g. learn $V^\pi ?$
 
 \paragraph{A2C / A3C}
 \emph{Asynchronous Advantage Actor Critic} (A3C) \cite{mnih2016asynchronous} and its synchronous version A2C are two widely used actor-critic methods. They both run $n$ environments in parallel to get better estimates of the returns (more samples = less variance).
 \begin{itemize}
-    \item Both a policy $\pi_\theta$ and a value function $V^{\pi}_{\theta_v}$ are learned. Most of the layers are shared between them (fig. \ref{fig:actor-critic-architecture}).
+    \item Both a policy $\pi_\theta$ and a value function $V^{\pi}_{\theta_v}$ are learned. Most of the layers are shared (fig. \ref{fig:actor-critic-architecture}).
     \item \emph{Asynchronous}. The A3C updates are done asynchronously: each agent sends its gradient to the global network every $k$ steps and updates its local weights after that.
     \item \emph{Advantage}. Use the $n$-steps return (forward view, eq. \ref{eq:n-steps-advantage}) to learn $V^\pi_{\theta_v}$ and to estimate the advantage function $A^\pi$.
 \end{itemize}
 The A2C algorithm works the same way but with synchronous, deterministic updates. It waits for all agents to be done with the $k$ steps, before performing a batch update and updating all weights at the same time.
 
-\todo{give actual formula (and algo) of A3C/A2C: https://arxiv.org/pdf/1611.01224.pdf}
-
+% todo: give actual formula (and algo) of A3C/A2C, cf https://arxiv.org/pdf/1611.01224.pdf
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.5\linewidth]{figures/actor-critic-architecture.jpg}
-    \caption{Network architectures for actor-critic methods. todo: re-make}
+    \includegraphics[width=0.8\linewidth]{figures/shared-actor-critic-network.png}
+    \caption{Example of a shared network architecture for actor-critic methods.}
     \label{fig:actor-critic-architecture}
 \end{figure}
 
@@ -173,11 +172,10 @@ with
         d^\pi(s) = (1-\gamma) \sum_{t=0}^\infty \gamma^t P(s_{t}=s|\pi)
     \label{eq:stationary-state-distribution}
     \end{equation}
-    (\todo{explain that it is the same as the \emph{stationary distribution} $d^\pi(s) = \lim_{t\rightarrow \infty} P(s_t = s \mid \pi)$})
-    % see https://eva.fing.edu.uy/pluginfile.php/343525/mod_resource/content/1/modern_methods.pdf
-    % https://lilianweng.github.io/lil-log/2018/04/08/policy-gradient-algorithms.html#policy-gradient-theorem
-    % https://www.alexirpan.com/rl-derivations/#state-visitation--occupency-measure
-    % https://proceedings.neurips.cc//paper/2020/file/69bfa2aa2b7b139ff581a806abf0a886-Paper.pdf
+    According to \href{https://eva.fing.edu.uy/pluginfile.php/343525/mod_resource/content/1/modern_methods.pdf}{this}, \href{https://lilianweng.github.io/lil-log/2018/04/08/policy-gradient-algorithms.html#policy-gradient-theorem}{this}, \href{https://www.alexirpan.com/rl-derivations/#state-visitation--occupency-measure}{this} and \href{https://proceedings.neurips.cc//paper/2020/file/69bfa2aa2b7b139ff581a806abf0a886-Paper.pdf}{this} (to check?), it should be the same as the \emph{stationary distribution}:
+    \[
+        d^\pi(s) = \lim_{t\rightarrow \infty} P(s_t = s \mid \pi)
+    \]
     \item $D_{KL}^{max}(\pi || \pi_{old}) = \max_s D_{KL}[\pi(\cdot|s) || \pi_{old}(\cdot|s)]$
     \item $C$ a factor that depends on $\gamma$ and $\pi_{old}$
 \end{itemize}
@@ -199,7 +197,6 @@ TRPO considers an approximate objective to eq. \ref{eq:performance-bound}. Since
 \label{eq:trpo-exact}
 \end{equation}
 for some hyper-parameter $\delta$.
-\todo{check the order of distributions in kl div}
 Using Taylor approximation, this training objective (eq. \ref{eq:trpo-exact}) is replaced by
 \begin{equation}
     \max_\theta g^T (\theta - \theta_{old})
@@ -236,7 +233,7 @@ At each iteration, sample estimates of the gradient $g$ and Fisher matrix $F$ ca
     \beta = \sqrt{\frac{2\delta}{g^T F^{-1} g}}
 \]
 Instead of directly inverting $F$ (impossible with deep and large models), the conjugate gradient method solves $Fx=g$ (max $d$ steps with $\theta \in \mathbb{R}^d$) and obtains an estimate of $x=F^{-1}g$, called the natural gradient
-\footnote{The natural gradient is effectively a gradient in the space of the distributions (using distance $D_{KL}(\pi_{\theta}||\pi_{\theta_{old}})$), rather than the space of parameters (with euclidean distance on parameters $\theta$). More details \href{https://julien-vitay.net/deeprl/NaturalGradient.html}{here} \cite{blog-natural-gradients}.}.
+\footnote{The natural gradient is effectively a gradient in the space of the distributions (using distance $D_{KL}(\pi_{\theta}||\pi_{\theta_{old}})$), rather than the space of parameters (with euclidean distance on parameters $\theta$). More details \href{https://julien-vitay.net/deeprl/NaturalGradient.html}{here}.}.
 The update steps becomes:
 \[
     \theta = \theta_{old} + \sqrt{\frac{2\delta}{x^T F x}} x
@@ -261,7 +258,8 @@ Second-order optimization methods like natural gradients perform well, but are c
             - \beta_k D_{KL}[\pi(\cdot|s)||\pi_{old}(\cdot|s)]
         \right]
     \end{align*}
-    With $\beta_k$ an adaptive KL penalty term ensuring that $\overline{D}_{KL}(\pi||\pi_{old})$ stays close to $\delta$ most of the time (cf \todo{algo}).
+    With $\beta_k$ an adaptive KL penalty term ensuring that $\overline{D}_{KL}(\pi||\pi_{old})$ stays close to $\delta$ most of the time.
+    % todo: algo
     \item \emph{Clipped objective}.
     \[
         \mathcal{L}^{CLIP}(\theta) 
@@ -276,12 +274,12 @@ Compared to TRPO, PPO makes it straightforward to share parameters between the p
 \begin{figure}
     \centering
     \includegraphics[width=0.5\linewidth]{figures/ppo-clip.png}
-    \caption{\emph{PPO w/ clipped objective}. Plots showing $\mathcal{L}^{CLIP}$ as a function of the probability ratio $r$, for positive advantages (left) and negative advantages (right). The red circle on each plot shows the starting point for the optimization, i.e., $r=1$. More detailed explanations \href{https://stackoverflow.com/a/50663200}{here} \cite{blog-ppo-clip}. Taken from \cite{schulman2017proximal}.}
+    \caption{\emph{PPO w/ clipped objective}. Plots showing $\mathcal{L}^{CLIP}$ as a function of the probability ratio $r$, for positive advantages (left) and negative advantages (right). The red circle on each plot shows the starting point for the optimization, i.e., $r=1$. More detailed explanations \href{https://stackoverflow.com/a/50663200}{here}. Figure taken from \cite{schulman2017proximal}.}
     \label{fig:ppo-clip}
 \end{figure}
 
 \subsection{Off-Policy}
-Although actor-critic methods such as PPO (\todo{and A2C/A3C/TRPO?}) are already re-using a couple recent samples, they are not as sample-efficient as off-policy value-based methods. \emph{Off-policy policy gradient} methods improve this, and make it possible to define better exploration strategies.
+Although actor-critic methods such as PPO or A2C/A3C are already re-using a couple recent samples, they are not as sample-efficient as off-policy value-based methods. \emph{Off-policy policy gradient} methods improve this, and make it possible to define better exploration strategies.
 
 In this section, samples are collected with a \emph{behavior policy} $\mu$, typically different from our learned policy $\pi_\theta$.
 
