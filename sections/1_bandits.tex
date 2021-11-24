@@ -34,7 +34,7 @@ $$
 \quad \text{with} \quad
 B_t(i) = \hat{\mu}_{i,t} + \sqrt{\frac{2 \log t}{T_i}}
 $$
-LinUCB \cite{li2010contextual} follows the UCB strategy but considers a linear and individual context $x_{i,t}$. We have $\mathbb{E}[r_{i,t} | x_{i,t}] = \theta_i^T x_{i,t}$ and parameters $\theta_i$ are estimated with Ridge Regression on previously observed contexts and rewards.
+LinUCB \cite{li2010contextual} follows the UCB strategy but considers a linear and individual context $x_{i,t}$. We have $\mathbb{E}[r_{i,t} \mid x_{i,t}] = \theta_i^T x_{i,t}$ and parameters $\theta_i$ are estimated with Ridge Regression on previously observed contexts and rewards.
 
 \paragraph{Thompson Sampling}
-Thompson Sampling \cite{kaufmann2012thompson} follows a Bayesian approach and considers a parametric model $P(\mathcal{D} | \theta)$ with a prior $P(\theta)$. For instance, in the linear case \cite{agrawal2013thompson}: $P(r_{i,t} | \theta) = \mathcal{N}(\theta^T x_{i,t}, v^2)$ and $P(\theta) = \mathcal{N}(0, \sigma^2)$. Then, at each iteration $t$, we sample $\theta$ from $P(\theta | \mathcal{D}) \propto P(\mathcal{D}|\theta) P(\theta)$ and select the arm $\pi_t = \argmax_i \mathbb{E}[r_{i,t} | x_{i,t}, \theta]$.
+Thompson Sampling \cite{kaufmann2012thompson} follows a Bayesian approach and considers a parametric model $P(\mathcal{D} \mid \theta)$ with a prior $P(\theta)$. For instance, in the linear case \cite{agrawal2013thompson}: $P(r_{i,t} \mid \theta) = \mathcal{N}(\theta^T x_{i,t}, v^2)$ and $P(\theta) = \mathcal{N}(0, \sigma^2)$. Then, at each iteration $t$, we sample $\theta$ from $P(\theta \mid \mathcal{D}) \propto P(\mathcal{D}\mid\theta) P(\theta)$ and select the arm $\pi_t = \argmax_i \mathbb{E}[r_{i,t} \mid x_{i,t}, \theta]$.

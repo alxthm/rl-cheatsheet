@@ -5,35 +5,35 @@ A Markov Decision Process is a tuple $(S, A, R, P, \rho_0)$ where
 \begin{itemize}
     \item $S$ is the set of all valid states
     \item $A$ is the set of all valid actions
-    \item $R: S \times A \times S \rightarrow \mathbb{R}$ is the \emph{reward function}, such that $r_t = R(s_t, a_t, s_{t+1})$. In the case the reward is stochastic and $r_t$ is a random variable, we have $R(s, a, s') = \mathbb{E}[r_t | s_t=s, a_t=a, s_{t+1}=s']$
-    \item $P: S \times A \times S \rightarrow [0, 1]$ the \emph{transition probability function}, such that $P(s' | s, a)$ is the probability of transitioning into state $s'$ if you are in state $s$ and take action $a$
+    \item $R: S \times A \times S \rightarrow \mathbb{R}$ is the \emph{reward function}, such that $r_t = R(s_t, a_t, s_{t+1})$. In the case the reward is stochastic and $r_t$ is a random variable, we have $R(s, a, s') = \mathbb{E}[r_t \mid s_t=s, a_t=a, s_{t+1}=s']$
+    \item $P: S \times A \times S \rightarrow [0, 1]$ the \emph{transition probability function}, such that $P(s' \mid s, a)$ is the probability of transitioning into state $s'$ if you are in state $s$ and take action $a$
     \item $\rho_0: S \rightarrow [0, 1]$ is the starting state distribution
 \end{itemize}
 
-\paragraph{Markov property} Transitions only depend on the most recent state and action, and no prior history : $P(s_{t+1}|s_t,a_t,\dots,s_1,a_0,s_0) = P(s_{t+1}|s_t,a_t)$. This assumption does not always hold, for instance when the observed state does not contain all necessary information (\emph{Partially Observable Markov Decision Process}), or when $P$ and $R$ actually depend on $t$ (\emph{Non-Stationary Markov Decision Process}).
+\paragraph{Markov property} Transitions only depend on the most recent state and action, and no prior history : $P(s_{t+1}\mid s_t,a_t,\dots,s_1,a_0,s_0) = P(s_{t+1}\mid s_t,a_t)$. This assumption does not always hold, for instance when the observed state does not contain all necessary information (\emph{Partially Observable Markov Decision Process}), or when $P$ and $R$ actually depend on $t$ (\emph{Non-Stationary Markov Decision Process}).
 
 When the MDP is known (e.g. small tabular environments), optimal policies can be found offline without interacting with the environment, using \nameref{section:dp} (DP) algorithms. But this is generally not the case and RL algorithms have to do trial-and-error search (like bandits problems), and have to deal with \emph{delayed rewards}. Actions may affect not only the immediate reward, but also the next state and therefore all subsequent rewards.
 
 \paragraph{Definitions}
 \begin{itemize}
-    \item The \emph{policy} $\pi$ determines the behavior of our agent, who will take actions $a_t \sim \pi(\cdot | s_t)$. Policies can be derived from an action-value function or can be explicitly parameterized and denoted by $\pi_{\theta}$. They can also be deterministic, in which case they are sometimes denoted by $\mu_{\theta}$, with $a_t = \mu_{\theta}(s_t)$.
-    \item A \emph{trajectory} $\tau = (s_0, a_0, s_1, \dots)$ is a sequence of states and actions in the world, with $s_0 \sim \rho_0$ and $s_{t+1} \sim P(\cdot | s_t, a_t)$. It is sampled from $\pi$ if $a_t \sim \pi(\cdot | s_t)$ for each $t$. Trajectories are also called \emph{episodes}.
+    \item The \emph{policy} $\pi$ determines the behavior of our agent, who will take actions $a_t \sim \pi(\cdot \mid s_t)$. Policies can be derived from an action-value function or can be explicitly parameterized and denoted by $\pi_{\theta}$. They can also be deterministic, in which case they are sometimes denoted by $\mu_{\theta}$, with $a_t = \mu_{\theta}(s_t)$.
+    \item A \emph{trajectory} $\tau = (s_0, a_0, s_1, \dots)$ is a sequence of states and actions in the world, with $s_0 \sim \rho_0$ and $s_{t+1} \sim P(\cdot \mid s_t, a_t)$. It is sampled from $\pi$ if $a_t \sim \pi(\cdot \mid s_t)$ for each $t$. Trajectories are also called \emph{episodes}.
     \item The return $R(\tau)$ is the cumulative reward over a trajectory and is the quantity to be maximized by our agent. It can refer to the \emph{finite-horizon undiscounted return} $R(\tau) = \sum_{t=0}^T r_t$ or the \emph{infinite-horizon discounted return} $R(\tau) = \sum_{t=0}^{\infty} \gamma^t r_t$ for instance. Parameter $\gamma$ is called the \emph{discount factor}.
-    \item The \emph{on-policy value function}: $V^{\pi}(s) = \E_{\tau \sim \pi}[R(\tau) | s_0=s]$
-    \item The \emph{on-policy action-value function}: $Q^{\pi}(s,a) = \E_{\tau \sim \pi}[R(\tau) | s_0=s, a_0=a]$. We have $V^{\pi}(s) = \E_{a \sim \pi(\cdot | s)}[Q^\pi(s,a)]$.
+    \item The \emph{on-policy value function}: $V^{\pi}(s) = \E_{\tau \sim \pi}[R(\tau) \mid s_0=s]$
+    \item The \emph{on-policy action-value function}: $Q^{\pi}(s,a) = \E_{\tau \sim \pi}[R(\tau) \mid s_0=s, a_0=a]$. We have $V^{\pi}(s) = \E_{a \sim \pi(\cdot \mid s)}[Q^\pi(s,a)]$.
     \item The \emph{advantage function}: $A^\pi(s,a) = Q^\pi(s,a) - V^\pi(s)$
     \item The optimal value and action-value functions are obtained by acting according to an optimal policy $\pi^*$: $V^*(s) = \max_{\pi} V^{\pi}(s)$, $Q^*(s,a) = \max_{\pi} Q^{\pi}(s,a)$. We have $V^*(s) = \max_a Q^*(s,a)$, and a deterministic optimal policy can be obtained with $\pi^*(s) = \argmax_a Q^*(s,a)$.
 \end{itemize}
 
 \paragraph{Bellman Equations}
 \begin{equation}
-    % V^{\pi}(s) = \E_{a \sim \pi(\cdot | s), s' \sim P}[R(s, a, s') + \gamma V^{\pi}(s')]
-    V^{\pi}(s) = \E_{\substack{a \sim \pi(\cdot | s) \\ s' \sim P}}[R(s, a, s') + \gamma V^{\pi}(s')]
+    % V^{\pi}(s) = \E_{a \sim \pi(\cdot \mid s), s' \sim P}[R(s, a, s') + \gamma V^{\pi}(s')]
+    V^{\pi}(s) = \E_{\substack{a \sim \pi(\cdot \mid s) \\ s' \sim P}}[R(s, a, s') + \gamma V^{\pi}(s')]
 \label{eq:bellman-v}
 \end{equation}
 
 \begin{equation}
-    Q^{\pi}(s, a) = \E_{s' \sim P}\left[R(s, a, s') + \gamma \E_{a'\sim \pi(\cdot | s')}[Q^{\pi}(s', a')] \right]
+    Q^{\pi}(s, a) = \E_{s' \sim P}\left[R(s, a, s') + \gamma \E_{a'\sim \pi(\cdot \mid s')}[Q^{\pi}(s', a')] \right]
 \label{eq:bellman-q}
 \end{equation}
 
@@ -47,4 +47,4 @@ When the MDP is known (e.g. small tabular environments), optimal policies can be
 \label{eq:bellman-q*}
 \end{equation}
 
-Where $s' \sim P$ is a shorthand for $s' \sim P(\cdot|s,a)$
+Where $s' \sim P$ is a shorthand for $s' \sim P(\cdot\mid s,a)$

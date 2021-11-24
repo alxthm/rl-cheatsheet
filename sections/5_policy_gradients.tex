@@ -1,17 +1,17 @@
 \section{Policy Gradients}
-Policy gradient algorithms directly optimize the policy $\pi_\theta(\cdot | s)$. The goal is to maximize the expected return under $\pi_\theta$:
+Policy gradient algorithms directly optimize the policy $\pi_\theta(\cdot \mid  s)$. The goal is to maximize the expected return under $\pi_\theta$:
 \[
     \max_\theta J(\theta) = \E_{\tau \sim \pi_\theta} [R(\tau)]
 \]
 Using the log-derivative trick ($\nabla f = f \nabla \log f$) and the likelihood of a trajectory $\tau$:
 \[
-    \pi_\theta(\tau) = \rho_0(s_0) \prod_{t=0}^T P(s_{t+1} | s_t, a_t) \pi_\theta(a_t | s_t)
+    \pi_\theta(\tau) = \rho_0(s_0) \prod_{t=0}^T P(s_{t+1} \mid  s_t, a_t) \pi_\theta(a_t \mid  s_t)
 \]
 the \emph{policy gradient} can be derived:
 \begin{align}
     \nabla_\theta J(\theta) 
     &= \E_{\tau \sim \pi_\theta} [\nabla_\theta \log \pi_\theta(\tau) R(\tau)] \nonumber \\
-    &= \E_{\tau \sim \pi_\theta} \left[\sum_{t=0}^T R(\tau) \nabla_\theta \log \pi_\theta(a_t | s_t) \right]
+    &= \E_{\tau \sim \pi_\theta} \left[\sum_{t=0}^T R(\tau) \nabla_\theta \log \pi_\theta(a_t \mid  s_t) \right]
     \label{eq:policy-gradient}
 \end{align}
 
@@ -28,7 +28,7 @@ Based on eq. \ref{eq:policy-gradient}, the REINFORCE algorithm simply uses a Mon
     \While{not enough samples}{
         collect trajectory $\tau_i=(s_0^i, a_0^i, \dots, s_{T_i}^i)$ by running active policy $\pi_\theta$
     }
-    $\hat{g} \leftarrow \sum_i \sum_t R(\tau^i) \nabla_\theta \log \pi_\theta(a_t^i | s_t^i)$ \tcp*{compute policy gradient estimate}
+    $\hat{g} \leftarrow \sum_i \sum_t R(\tau^i) \nabla_\theta \log \pi_\theta(a_t^i \mid  s_t^i)$ \tcp*{compute policy gradient estimate}
     $\theta \leftarrow \theta + \alpha \hat{g}$ \;
 }
 \caption{Vanilla REINFORCE}
@@ -42,7 +42,7 @@ It is unbiased but typically has very high variance and is slow to converge. Var
     \item \emph{Baseline}
     For any function $b:\mathcal{S} \rightarrow \mathbb{R}$, we have:
     \[
-        \E_{\tau \sim \pi_\theta} \left[\sum_{t=0}^T b(s_t) \nabla_\theta \log \pi_\theta(a_t | s_t) \right] = 0
+        \E_{\tau \sim \pi_\theta} \left[\sum_{t=0}^T b(s_t) \nabla_\theta \log \pi_\theta(a_t \mid  s_t) \right] = 0
     \]
     Hence \demo we can use $(R(\tau) - b(s_t))$ instead of $R(\tau)$, and the variance is minimal when choosing $b(s) = V^\pi(s)$  (e.g. by fitting $b(s_t)$ to  $R_t(\tau)$).
     \item \emph{Discount}
@@ -52,7 +52,7 @@ It is unbiased but typically has very high variance and is slow to converge. Var
 More generally, the policy gradient can be expressed as:
 \begin{equation}
     \nabla_\theta J(\theta) 
-    = \E_{\tau \sim \pi_\theta} \left[\sum_{t=0}^T \Psi_t \nabla_\theta \log \pi_\theta(a_t | s_t) \right]
+    = \E_{\tau \sim \pi_\theta} \left[\sum_{t=0}^T \Psi_t \nabla_\theta \log \pi_\theta(a_t \mid  s_t) \right]
     \label{eq:policy-gradient2}
 \end{equation}
 
@@ -70,18 +70,18 @@ Actor-critic methods combine the strengths of policy gradient and value-based me
 \paragraph{Actor-Critic with compatible functions}
 We can try to approximate $A^\pi$ with a function $f_\phi: \mathcal{S} \times \mathcal{A} \rightarrow \mathbb{R}$. According to the \emph{Compatible Function Approximation Theorem} \cite{sutton2000policy} \demo, if $f_\phi$ satisfies
 \begin{equation}
-    \forall s, a, \nabla_\phi f_\phi(s,a) = \nabla_\theta \log \pi_\theta(a|s)
+    \forall s, a, \nabla_\phi f_\phi(s,a) = \nabla_\theta \log \pi_\theta(a\mid s)
     \qquad \text{(i.e. $f_\phi$ is \emph{compatible})}
 \label{eq:compat-fct-1}
 \end{equation}
 \begin{equation}
-    \E_{\tau \sim \pi_\theta} \left[ \sum_{t=0}^T \gamma^t (Q^\pi(s_t,a_t) - f_\phi(s_t,a_t)) \nabla_\theta \log \pi_\theta(a_t|s_t)\right] = 0
+    \E_{\tau \sim \pi_\theta} \left[ \sum_{t=0}^T \gamma^t (Q^\pi(s_t,a_t) - f_\phi(s_t,a_t)) \nabla_\theta \log \pi_\theta(a_t\mid s_t)\right] = 0
 \label{eq:compat-fct-2}
 \end{equation}
 then the policy gradient is exact:
 \[
     \nabla_\theta J(\theta) 
-    = \E_{\tau \sim \pi_\theta} \left[\sum_{t=0}^T \gamma^t f_\phi(s_t,a_t) \nabla_\theta \log \pi_\theta(a_t | s_t) \right]
+    = \E_{\tau \sim \pi_\theta} \left[\sum_{t=0}^T \gamma^t f_\phi(s_t,a_t) \nabla_\theta \log \pi_\theta(a_t \mid  s_t) \right]
 \]
 Eq. \ref{eq:compat-fct-1} can be satisfied with $f_\phi(s,a) = \nabla_\theta \log \pi_\theta(s,a)^T \phi$, and eq. \ref{eq:compat-fct-2} by solving:
 \[
@@ -104,8 +104,8 @@ and control the bias-variance trade-off with $n$ ($n=1$: lower variance but high
 \]
 Here as well, eligibility traces are a way to implement GAE$(\gamma,\lambda)$. Indeed, we can re-write the sample estimate of the policy gradient:
 \[
-    \sum_{t=0}^\infty A_t^{GAE(\gamma,\lambda)} \nabla_\theta \log \pi_\theta(a_t | s_t)
-    = \sum_{t=0}^\infty \nabla_\theta \log \pi_\theta(a_t | s_t) \sum_{n=0}^\infty (\gamma \lambda)^n \delta_{t+n}
+    \sum_{t=0}^\infty A_t^{GAE(\gamma,\lambda)} \nabla_\theta \log \pi_\theta(a_t \mid  s_t)
+    = \sum_{t=0}^\infty \nabla_\theta \log \pi_\theta(a_t \mid  s_t) \sum_{n=0}^\infty (\gamma \lambda)^n \delta_{t+n}
 \]
 
 \begin{algorithm}[H]
@@ -150,7 +150,7 @@ To encourage exploration and avoid converging on a deterministic policy too fast
 \]
 With
 \[
-    H_\theta(s_t) = - \sum_a \pi_\theta(a_t|s_t) \log \pi_\theta(a_t|s_t)
+    H_\theta(s_t) = - \sum_a \pi_\theta(a_t\mid s_t) \log \pi_\theta(a_t\mid s_t)
 \]
 the entropy term to maximize.
 
@@ -159,24 +159,24 @@ Instead of looking directly for $\max_\pi J(\pi)$, we can optimize the \emph{rel
 \begin{align}
     J(\pi) - J(\pi_{old}) 
     &= \E_{\tau \sim \pi} \left[ \sum_{t=0}^\infty \gamma^t A^{\pi_{old}}(s_t,a_t) \right] \nonumber\\
-    &= \frac{1}{1-\gamma} \E_{s\sim d^\pi(s), a \sim \pi_{old}(a|s)} \left[ \frac{\pi(a|s)}{\pi_{old}(a|s)} A^{\pi_{old}}(s,a)\right] \nonumber\\
-    &\geq \underbrace{\frac{1}{1-\gamma} \E_{s\sim d^{\pi_{old}}(s), a \sim \pi_{old}(a|s)} \left[ 
-        \frac{\pi(a|s)}{\pi_{old}(a|s)} A^{\pi_{old}}(s,a)
-    \right]}_{=L_{\theta_{old}}(\theta)} - C D_{KL}^{max}(\pi || \pi_{old})
+    &= \frac{1}{1-\gamma} \E_{s\sim d^\pi(s), a \sim \pi_{old}(a\mid s)} \left[ \frac{\pi(a\mid s)}{\pi_{old}(a\mid s)} A^{\pi_{old}}(s,a)\right] \nonumber\\
+    &\geq \underbrace{\frac{1}{1-\gamma} \E_{s\sim d^{\pi_{old}}(s), a \sim \pi_{old}(a\mid s)} \left[ 
+        \frac{\pi(a\mid s)}{\pi_{old}(a\mid s)} A^{\pi_{old}}(s,a)
+    \right]}_{=L_{\theta_{old}}(\theta)} - C D_{KL}^{max}(\pi \mid \mid  \pi_{old})
     \label{eq:performance-bound}
 \end{align}
 with
 \begin{itemize}
     \item The \emph{discounted state distribution} of policy $\pi$
     \begin{equation}
-        d^\pi(s) = (1-\gamma) \sum_{t=0}^\infty \gamma^t P(s_{t}=s|\pi)
+        d^\pi(s) = (1-\gamma) \sum_{t=0}^\infty \gamma^t P(s_{t}=s\mid \pi)
     \label{eq:stationary-state-distribution}
     \end{equation}
     According to \href{https://eva.fing.edu.uy/pluginfile.php/343525/mod_resource/content/1/modern_methods.pdf}{this}, \href{https://lilianweng.github.io/lil-log/2018/04/08/policy-gradient-algorithms.html#policy-gradient-theorem}{this}, \href{https://www.alexirpan.com/rl-derivations/#state-visitation--occupency-measure}{this} and \href{https://proceedings.neurips.cc//paper/2020/file/69bfa2aa2b7b139ff581a806abf0a886-Paper.pdf}{this} (to check?), it should be the same as the \emph{stationary distribution}:
     \[
         d^\pi(s) = \lim_{t\rightarrow \infty} P(s_t = s \mid \pi)
     \]
-    \item $D_{KL}^{max}(\pi || \pi_{old}) = \max_s D_{KL}[\pi(\cdot|s) || \pi_{old}(\cdot|s)]$
+    \item $D_{KL}^{max}(\pi \mid \mid  \pi_{old}) = \max_s D_{KL}[\pi(\cdot\mid s) \mid \mid  \pi_{old}(\cdot\mid s)]$
     \item $C$ a factor that depends on $\gamma$ and $\pi_{old}$
 \end{itemize}
 A number of algorithms (e.g. TRPO, PPO) maximize this lower bound of the relative performance, by keeping $\pi$ (current policy) and $\pi_{old}$ (old policy) close and maximizing objective $L_{\theta_{old}}(\theta)$. This has the advantages of:
@@ -191,8 +191,8 @@ TRPO considers an approximate objective to eq. \ref{eq:performance-bound}. Since
     \max_\theta L_{\theta_{old}}(\theta) 
     \quad \text{subject to} \quad
     \underbrace{
-        \E_{s \sim d^{\pi_{old}}}[D_{KL}(\pi(\cdot|s) || \pi_{old}(\cdot|s)]
-    }_{=\overline{D}_{KL}(\pi||\pi_{old})}
+        \E_{s \sim d^{\pi_{old}}}[D_{KL}(\pi(\cdot\mid s) \mid \mid  \pi_{old}(\cdot\mid s)]
+    }_{=\overline{D}_{KL}(\pi\mid \mid \pi_{old})}
     \leq \delta    
 \label{eq:trpo-exact}
 \end{equation}
@@ -211,16 +211,16 @@ g
     &= \nabla_\theta J(\theta)\big|_{\theta=\theta_{old}} 
     \qquad \text{(only at $\theta=\theta_{old}$)} \\
     &= \frac{1}{1-\gamma} 
-    \E_{s\sim d^{\pi_{old}}, a \sim \pi_{old}(\cdot|s)}\left[
-        \nabla_\theta \log \pi_\theta(a|s)\big|_{\theta=\theta_{old}} A^{\pi_k}(s,a)
+    \E_{s\sim d^{\pi_{old}}, a \sim \pi_{old}(\cdot\mid s)}\left[
+        \nabla_\theta \log \pi_\theta(a\mid s)\big|_{\theta=\theta_{old}} A^{\pi_k}(s,a)
     \right]
 \end{align*}
 and
 \begin{align*}
 F 
-    &= \nabla^2_\theta \overline{D}_{KL}(\pi||\pi_{old})\big|_{\theta=\theta_{old}} \\
+    &= \nabla^2_\theta \overline{D}_{KL}(\pi\mid \mid \pi_{old})\big|_{\theta=\theta_{old}} \\
     &= \E_{s\sim d^{\pi_{old}}}\left[
-        \nabla^2_\theta D_{KL}(\pi(\cdot|s)||\pi_{old}(\cdot|s))\big|_{\theta=\theta_{old}}
+        \nabla^2_\theta D_{KL}(\pi(\cdot\mid s)\mid \mid \pi_{old}(\cdot\mid s))\big|_{\theta=\theta_{old}}
     \right]
 \end{align*}
 
@@ -233,12 +233,12 @@ At each iteration, sample estimates of the gradient $g$ and Fisher matrix $F$ ca
     \beta = \sqrt{\frac{2\delta}{g^T F^{-1} g}}
 \]
 Instead of directly inverting $F$ (impossible with deep and large models), the conjugate gradient method solves $Fx=g$ (max $d$ steps with $\theta \in \mathbb{R}^d$) and obtains an estimate of $x=F^{-1}g$, called the natural gradient
-\footnote{The natural gradient is effectively a gradient in the space of the distributions (using distance $D_{KL}(\pi_{\theta}||\pi_{\theta_{old}})$), rather than the space of parameters (with euclidean distance on parameters $\theta$). More details \href{https://julien-vitay.net/deeprl/NaturalGradient.html}{here}.}.
+\footnote{The natural gradient is effectively a gradient in the space of the distributions (using distance $D_{KL}(\pi_{\theta}\mid \mid \pi_{\theta_{old}})$), rather than the space of parameters (with euclidean distance on parameters $\theta$). More details \href{https://julien-vitay.net/deeprl/NaturalGradient.html}{here}.}.
 The update steps becomes:
 \[
     \theta = \theta_{old} + \sqrt{\frac{2\delta}{x^T F x}} x
 \]
-Finally, a \emph{backtracking line search} adjusts the step size in order to make the largest update that effectively improves the objective $L_{\theta_{old}}(\theta)$ and respects the constraint $\overline{D}_{KL}(\pi||\pi_{old}) \leq \delta$ (which may be violated due to the approximations).
+Finally, a \emph{backtracking line search} adjusts the step size in order to make the largest update that effectively improves the objective $L_{\theta_{old}}(\theta)$ and respects the constraint $\overline{D}_{KL}(\pi\mid \mid \pi_{old}) \leq \delta$ (which may be violated due to the approximations).
 
 \paragraph{Natural Gradient with compatible functions}
 When using a compatible function for the advantage estimation (eq. \ref{eq:compat-fct-1} and \ref{eq:compat-fct-2}), it follows that $F \phi = \nabla_\theta J(\theta)$ \demo, and $\phi = F^{-1} \nabla_\theta J(\theta)$ is actually the natural gradient (cf TRPO).
@@ -252,13 +252,13 @@ Second-order optimization methods like natural gradients perform well, but are c
     \begin{align*}
         \mathcal{L}^{KL}(\theta) 
         &= L_{\theta_{old}}(\theta) - 
-        \beta_k \overline{D}_{KL}(\pi||\pi_{old}) \\
+        \beta_k \overline{D}_{KL}(\pi\mid \mid \pi_{old}) \\
         &= \E_{s,a\sim \pi_{old}} \left[
-            \frac{\pi(a|s)}{\pi_{old}(a|s)} A^{\pi_{old}}(s,a)
-            - \beta_k D_{KL}[\pi(\cdot|s)||\pi_{old}(\cdot|s)]
+            \frac{\pi(a\mid s)}{\pi_{old}(a\mid s)} A^{\pi_{old}}(s,a)
+            - \beta_k D_{KL}[\pi(\cdot\mid s)\mid \mid \pi_{old}(\cdot\mid s)]
         \right]
     \end{align*}
-    With $\beta_k$ an adaptive KL penalty term ensuring that $\overline{D}_{KL}(\pi||\pi_{old})$ stays close to $\delta$ most of the time.
+    With $\beta_k$ an adaptive KL penalty term ensuring that $\overline{D}_{KL}(\pi\mid \mid \pi_{old})$ stays close to $\delta$ most of the time.
     % todo: algo
     \item \emph{Clipped objective}.
     \[
@@ -267,7 +267,7 @@ Second-order optimization methods like natural gradients perform well, but are c
             \min(r_t(\theta) A^{\pi_{old}}_t, \text{clip}(r_t(\theta), 1-\epsilon, 1+\epsilon) A^{\pi_{old}}_t)
         \right]
     \]
-    With $r_t(\theta) = \frac{\pi_\theta(a_t|s_t)}{\pi_{\theta_{old}}(a_t,s_t)}$ and $A^{\pi_{old}}_t = A^{\pi_{old}}(s_t,a_t)$. As illustrated in figure \ref{fig:ppo-clip}, this objective is a pessimistic lower bound of $\frac{\pi(a|s)}{\pi_{old}(a|s)} A^{\pi_{old}}(s,a)$, and effectively discourage too large improvements of policy $\pi_\theta$ by clipping the probability ratio. Updates in the wrong direction, i.e. that deteriorate $\pi_\theta$, remain fully penalized. 
+    With $r_t(\theta) = \frac{\pi_\theta(a_t\mid s_t)}{\pi_{\theta_{old}}(a_t,s_t)}$ and $A^{\pi_{old}}_t = A^{\pi_{old}}(s_t,a_t)$. As illustrated in figure \ref{fig:ppo-clip}, this objective is a pessimistic lower bound of $\frac{\pi(a\mid s)}{\pi_{old}(a\mid s)} A^{\pi_{old}}(s,a)$, and effectively discourage too large improvements of policy $\pi_\theta$ by clipping the probability ratio. Updates in the wrong direction, i.e. that deteriorate $\pi_\theta$, remain fully penalized. 
 \end{itemize}
 Compared to TRPO, PPO makes it straightforward to share parameters between the policy and value functions. Also, re-using the sampled data $\mathcal{D}_k$ for $K$ update steps makes it more data-efficient.
 
@@ -371,7 +371,7 @@ With $c$ a hyper-parameter and $\omega_t(a) = \frac{\pi(a\mid s_t)}{\mu(a\mid s_
 
 In addition to this, ACER does trust-region updates (like TRPO) but actually considers the gradient $g_{\phi_\theta(s_t)}$ w.r.t. the policy distribution parameters $\phi_\theta(s)$ (e.g. logits or probability vector of discrete actions) instead of the model parameters $\theta$. With $\pi_{\theta_a}$ a smoothly updated average policy, the following optimisation problem is solved: 
 \[
-    \min_z \frac{1}{2} ||g_{\phi_\theta(s_t)} - z||^2 \quad \text{s.t.} \quad
+    \min_z \frac{1}{2} \mid \mid g_{\phi_\theta(s_t)} - z\mid \mid ^2 \quad \text{s.t.} \quad
     \nabla_{\phi_\theta(s_t)} D_{KL}[
         \pi_{\theta_a}(\cdot \mid s_t) \mid \mid \pi_\theta(\cdot \mid s_t)
     ]^T z \leq \delta

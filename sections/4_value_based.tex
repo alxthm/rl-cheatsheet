@@ -35,7 +35,7 @@ Starting from a random value-action function $Q$, tabular Q-learning consists in
         \]
     \item \emph{Boltzmann selection}
         \[
-          \pi(a|s) = \frac{\exp(Q(s,a)/\tau)}{\sum_{a'} \exp(Q(s,a')/\tau)}
+          \pi(a\mid s) = \frac{\exp(Q(s,a)/\tau)}{\sum_{a'} \exp(Q(s,a')/\tau)}
         \]
     \item Others: UCB-1, pursuit strategy. Comparison in \cite{tijsma2016comparing} (for stochastic mazes).
 \end{itemize}
