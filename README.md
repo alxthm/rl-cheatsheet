@@ -20,3 +20,19 @@ Some important concepts and algorithms in RL, all summarized in one place. File 
 - [Reinforcement Learning and advanced Deep Learning (RLD)](https://dac.lip6.fr/master/rladl/), Sorbonne University course, by Sylvain Lamprier
 - [Spinning Up in Deep RL](https://spinningup.openai.com/en/latest/index.html), Open AI
 - [UCL Course on RL](https://www.davidsilver.uk/teaching/), David Silver's Lecture
+
+## Contributing
+Contributions are welcome !
+If you find any typo or error, feel free to raise an issue. 
+
+If you would like to contribute to the code and make changes directly (e.g. adding algorithms, adding a new section, etc), you should start by cloning the repository.
+
+```
+git clone https://github.com/alexandrethm/rl-cheatsheet.git
+```
+
+### Work locally
+Since all the sources and figures are included in the repo, you can make modifications and build the document locally. For this, you should have a full TeX distribution (if not, you can install it [here](https://www.latex-project.org/get/)), and you can then edit the LateX files with any IDE (e.g. Visual Studio Code).
+
+### Work on Overleaf
+If you'd rather avoid installing LateX, you can also use [Overleaf](https://www.overleaf.com/). For this, you need to compress the `rl-cheatsheet` folder and upload it to Overleaf (`New Project -> Upload Project`).
