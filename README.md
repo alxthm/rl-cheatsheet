@@ -1,6 +1,6 @@
 # Reinforcement Learning Cheatsheet
 
-Some important concepts and algorithms in RL, all summarized in one place. File is also available [here](https://alexandrethm.github.io/assets/pdf/rl-cheatsheet.pdf).
+Some important concepts and algorithms in RL, all summarized in one place. PDF file is also available [here](https://alexandrethm.github.io/assets/pdf/rl-cheatsheet.pdf).
 
 ## Contents
 
