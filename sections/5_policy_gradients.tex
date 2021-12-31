@@ -172,7 +172,9 @@ with
         d^\pi(s) = (1-\gamma) \sum_{t=0}^\infty \gamma^t P(s_{t}=s\mid \pi)
     \label{eq:stationary-state-distribution}
     \end{equation}
-    According to \href{https://eva.fing.edu.uy/pluginfile.php/343525/mod_resource/content/1/modern_methods.pdf}{this}, \href{https://lilianweng.github.io/lil-log/2018/04/08/policy-gradient-algorithms.html#policy-gradient-theorem}{this}, \href{https://www.alexirpan.com/rl-derivations/#state-visitation--occupency-measure}{this} and \href{https://proceedings.neurips.cc//paper/2020/file/69bfa2aa2b7b139ff581a806abf0a886-Paper.pdf}{this} (to check?), it should be the same as the \emph{stationary distribution}:
+% According to Sylvain Lamprier, 
+% FALSE:   According to \href{https://eva.fing.edu.uy/pluginfile.php/343525/mod_resource/content/1/modern_methods.pdf}{this}, \href{https://lilianweng.github.io/lil-log/2018/04/08/policy-gradient-algorithms.html#policy-gradient-theorem}{this}, \href{https://www.alexirpan.com/rl-derivations/#state-visitation--occupency-measure}{this} and \href{https://proceedings.neurips.cc//paper/2020/file/69bfa2aa2b7b139ff581a806abf0a886-Paper.pdf}{this} (to check?), 
+    This is \emph{not} the same as the \emph{stationary distribution}:
     \[
         d^\pi(s) = \lim_{t\rightarrow \infty} P(s_t = s \mid \pi)
     \]
