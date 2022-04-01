@@ -1,6 +1,6 @@
 # Reinforcement Learning Cheat Sheet
 
-Some important concepts and algorithms in RL, all summarized in one place. PDF file is also available [here](https://alexandrethm.github.io/assets/pdf/rl-cheatsheet.pdf).
+Some important concepts and algorithms in RL, all summarized in one place. PDF file is also available [here](https://alxthm.com/assets/pdf/rl-cheatsheet.pdf).
 
 ## Contents
 
@@ -28,7 +28,7 @@ If you find any typo or error, feel free to raise an issue.
 If you would like to contribute to the code and make changes directly (e.g. adding algorithms, adding a new section, etc), you should start by cloning the repository.
 
 ```
-git clone https://github.com/alexandrethm/rl-cheatsheet.git
+git clone https://github.com/alxthm/rl-cheatsheet.git
 ```
 
 ### Work locally
